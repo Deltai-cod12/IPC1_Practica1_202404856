@@ -8,8 +8,17 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class SopaDeLetras {
-    static String[] Palabras = new String[0]; //Se mantiene en memoria
-    static String Usuario;
+    //En esta parte se almacenan los datos como lo son las Palabras, El Usuario, Puntuaciones, etc.
+    static String[] Palabras = new String[0]; 
+    static String[] Usuario = new String[100];
+    static int[] Puntuaciones = new int[100];
+    static int[] PalabrasEncontradas = new int[100];
+    static int[] Fallos = new int[100];
+    static int[] PuntuacionesAltas = new int[100];
+    
+    static int ContadorDeJugadores = 0;
+    
+    
     public static void main(String[] args) {
         MenuBienvenida();
     }
@@ -17,17 +26,16 @@ public class SopaDeLetras {
     static void MenuBienvenida() {
         Scanner leer = new Scanner(System.in);
         int num;
-
+        //Aqui mostramos el menu principal
         System.out.println("______________________________________");
         System.out.println("Autor: Angel Emanuel Rodriguez Corado");
         System.out.println("Carnet: 202404856");
         System.out.println("Seccion: E");
         System.out.println("______________________________________");
+        
 
-        System.out.print("Ingrese un nombre de usuario: ");
-        Usuario = leer.nextLine();
+        System.out.print("---------------SOPA DE LETRAS--------------");
         System.out.println("\n---------------------------------------");
-        System.out.println("Bienvenid@: " + Usuario);
         System.out.println("Elige el numero según lo que desees:");
         System.out.println("[1] Nueva Partida");
         System.out.println("[2] Historial de Partidas");
@@ -36,18 +44,19 @@ public class SopaDeLetras {
         System.out.print("Ingrese su eleccion: ");
 
         num = leer.nextInt();
-        leer.nextLine(); // Limpiar buffer después de leer un número
+        leer.nextLine();
 
         switch (num) {
             case 1 -> MenuNuevaPartida();
             case 2 -> MenuHistorial();
             case 3 -> MenuPuntuacion();
-            case 4 -> System.out.println("Saliendo del programa...");
-            default -> System.out.println("Opción invalida, intenta nuevamente.");
+            case 4 -> System.exit(0);
+            default -> System.out.println("Opcion invalida, intenta nuevamente.");
         }
     }
 
     static void MenuNuevaPartida() {
+        //Aqui mostramos el menu de la partida, donde podra agregar, modificar, eliminar o iniciar la partida.
         Scanner leer = new Scanner(System.in);
         byte menu;
 
@@ -68,7 +77,7 @@ public class SopaDeLetras {
             switch (menu) {
                 case 1:
                     System.out.println("-------------------------------------------------");
-                    System.out.print("Ingrese el nmero de palabras que desees: ");
+                    System.out.print("Ingrese el numero de palabras que desees: ");
                     int NumeroDePalabras = leer.nextInt();
                     Palabras = IngresoDePalabras(NumeroDePalabras); //Guardar variable global
 
@@ -92,39 +101,82 @@ public class SopaDeLetras {
                     IniciarPartida();
                     break;
                 case 5:
-                    System.out.println("Saliendo al menú principal...");
+                    System.out.println("Saliendo al menu principal...");
                     MenuBienvenida();
                     break;
 
                 default:
-                    System.out.println("Opción inválida, intente de nuevo.");
+                    System.out.println("Opcion invalida, intente de nuevo.");
             }
 
         } while (menu != 4);
     }
 
     static void MenuHistorial() {
-        System.out.println("Historial de partidas aún no implementado.");
+        //En este menu se muestran todas las partidas de los distintos Usuarios, se muestran datos como su puntuacion, aciertos y fallos.
+        System.out.println("HISTORIAL DE PARTIDAS");
+        System.out.println("Se mostraran los datos de los Usuarios ingresados");
+        for (int i = 0; i < ContadorDeJugadores; i++) {
+        System.out.println("Jugador #" + (i + 1));
+        System.out.println("Usuario: " + Usuario[i]);
+        System.out.println("Puntuaciones: " + Puntuaciones[i]);
+        System.out.println("Aciertos: " + PalabrasEncontradas[i]);
+        System.out.println("Fallos: " + Fallos[i]);
+        System.out.println("--------------------------------------");
+    }
     }
     
     static void MenuPuntuacion() {
-        System.out.println("Puntuación más alta aún no implementada.");
+    //En esta parte se muestra la posicion de mayor a menor de cada Usuario dependiendo su punteo.
+    System.out.println("A continuación se muestra el punteo de los jugadores (de mayor a menor):");
+    
+    if (ContadorDeJugadores == 0) {
+        System.out.println("No se han registrado partidas aun.");
+        return;
     }
+    
+    int[] indices = new int[ContadorDeJugadores];
+    for (int i = 0; i < ContadorDeJugadores; i++) {
+        indices[i] = i;
+    }
+    
+    for (int i = 0; i < ContadorDeJugadores - 1; i++) {
+        for (int j = i + 1; j < ContadorDeJugadores; j++) {
+            if (Puntuaciones[indices[i]] < Puntuaciones[indices[j]]) {
+                int temp = indices[i];
+                indices[i] = indices[j];
+                indices[j] = temp;
+            }
+        }
+    }
+    
+    System.out.println("Posicion de jugadores:");
+    for (int i = 0; i < ContadorDeJugadores; i++) {
+        int index = indices[i];
+        System.out.println("-------------------------------------------");
+        System.out.println("Posición " + (i + 1) + ": " + Usuario[index] 
+                + " - Puntuación: " + Puntuaciones[index]
+                + " - Aciertos: " + PalabrasEncontradas[index]
+                + " - Fallos: " + Fallos[index]);
+    }
+}
 
     static String[] IngresoDePalabras(int NumeroDePalabras) {
+        
+        //En esta parte le damos instrucciones al Usuario para que pueda ingresar las palabras.
+        
         String[] palabras = new String[NumeroDePalabras];
         Scanner leer = new Scanner(System.in);
 
         System.out.println("Ingrese palabras de 5 a 10 letras:");
-        System.err.println("--UNICAMENTE SE ACEPTAN MAYUSCULAS--");
-
+        
         for (int i = 0; i < NumeroDePalabras; i++) {
             String palabra;
             do {
                 System.out.print("Palabra [" + (i + 1) + "]: ");
                 palabra = leer.next();
                 if (palabra.length() < 5 || palabra.length() > 10) {
-                    System.out.println("AaanfeasdaLa palabra debe tener entre 5 y 10 letras. Intente de nuevo.");
+                    System.out.println("La palabra debe tener entre 5 y 10 letras. Intente de nuevo.");
                 }
             } while (palabra.length() < 5 || palabra.length() > 10);
 
@@ -135,6 +187,9 @@ public class SopaDeLetras {
     }
 
     static void ModificarPalabras() {
+        
+        //En este menu le damos la opcion al Usuario de poder modificar una palabra que haya agregado anteriormente.
+        
         Scanner leer = new Scanner(System.in);
 
         if (Palabras.length == 0) {
@@ -152,29 +207,31 @@ public class SopaDeLetras {
                 System.out.print("Ingrese la nueva palabra: ");
                 String nuevaPalabra = leer.nextLine();
                 
-                // 🔹 Validar que la nueva palabra tenga entre 5 y 10 letras
                 if (nuevaPalabra.length() < 5 || nuevaPalabra.length() > 10) {
-                    System.out.println("Error: La palabra debe tener entre 5 y 10 letras.");
+                    System.out.println("--La palabra debe tener entre 5 y 10 letras--");
                     return;
                 }
 
                 Palabras[i] = nuevaPalabra;
                 encontrada = true;
-                System.out.println("Palabra modificada con éxito.");
+                System.out.println("--Palabra modificada con exito--");
                 break;
             }
         }
 
         if (!encontrada) {
-            System.out.println("Error: La palabra no fue encontrada.");
+            System.out.println("--La palabra no fue encontrada--");
         }
     }
    
     static void EliminarPalabras() {
+        
+        //En este apartado le damos la opcion al Usuario de poder eliminar una palabra que haya ingresado anteriormente
+        
         Scanner leer = new Scanner(System.in);
 
         if (Palabras.length == 0) {
-            System.out.println("No hay palabras para eliminar.");
+            System.out.println("--No hay palabras para eliminar--");
             return;
         }
 
@@ -202,103 +259,190 @@ public class SopaDeLetras {
             Palabras = nuevoArreglo;
             System.out.println("Palabra eliminada correctamente.");
         } else {
-            System.out.println("Error: La palabra no fue encontrada.");
+            System.out.println("--La palabra no fue encontrada--");
         }
     }
 
-static void IniciarPartida() {
+
+    static void IniciarPartida() {
+        
+    //En este apartado se genera la partida y el tablero de juego
+        
     char[][] tablero = new char[14][14];
+    boolean[][] palabrasEncontradas = new boolean[14][14];
+    int intentosFallidos = 0;
+    int palabrasRestantes = Palabras.length;
+    int puntos = 25;
+    int Aciertos = 0;
+    Scanner leer = new Scanner(System.in);
+    
+    System.out.println("Ingrese su nombre de usuario: ");
+    String NombreUsuario = leer.nextLine();
+    System.out.println("Buena suerte" + NombreUsuario);
 
     if (Palabras == null || Palabras.length == 0) {
         System.out.println("No hay palabras agregadas.");
-        System.out.println("Por favor ingrese sus palabras en el siguiente menú.");
+        System.out.println("Por favor ingrese sus palabras en el siguiente menu.");
         MenuNuevaPartida();
         return;
     }
 
-    System.out.println("  ____________________________");
-    System.out.println(" /     Tablero de Juego      /");
-    System.out.println("/____________________________/");
-
-    // Tablero en blanco
+    // Iniciamos el tablero con espacios vacios
     for (int f = 0; f < 14; f++) {
         for (int c = 0; c < 14; c++) {
-            tablero[f][c] = ' '; // Ahora sí hay celdas vacías
+            tablero[f][c] = ' ';
         }
     }
 
-    // Ingresar las palabras en el tablero 
+    // Colocamoslas palabras ingresadas por el Usuario en el tablero aleatoriamente (Convertimos las letras de las palabras en mayusculas
     for (String palabra : Palabras) {
+        palabra = palabra.toUpperCase();
         boolean colocada = false;
-
-        while (!colocada) { 
+        while (!colocada) {
             int fila = (int) (Math.random() * 14);
             int columna = (int) (Math.random() * 14);
-            int direccion = (int) (Math.random() * 2); // 0 = Horizontal, 1 = Vertical
-
-            // Ajustar posición si la palabra se sale del tablero
+            int direccion = (int) (Math.random() * 2);
+            
+            // Ajustamos la posición si la palabra se sale del tablero de juego
             if (direccion == 0 && columna + palabra.length() > 14) {
                 columna = 14 - palabra.length();
             } else if (direccion == 1 && fila + palabra.length() > 14) {
                 fila = 14 - palabra.length();
             }
-
-            // Verificar
+            
+            //Posicion horizontal del tablero
             boolean hayColision = false;
-            if (direccion == 0) { // Horizontal
+            if (direccion == 0) { 
                 for (int i = 0; i < palabra.length(); i++) {
-                    if (tablero[fila][columna + i] != ' ') { 
+                    if (tablero[fila][columna + i] != ' ') {
                         hayColision = true;
                         break;
                     }
                 }
-            } else { // Vertical
+                
+            //Posicion vertical del tablero    
+            } else { 
                 for (int i = 0; i < palabra.length(); i++) {
-                    if (tablero[fila + i][columna] != ' ') { 
+                    if (tablero[fila + i][columna] != ' ') {
                         hayColision = true;
                         break;
                     }
                 }
             }
 
-            // Colocar palabra
             if (!hayColision) {
-                for (int i = 0; i < palabra.length(); i++) {
-                    if (direccion == 0) { 
+                if (direccion == 0) {
+                    for (int i = 0; i < palabra.length(); i++) {
                         tablero[fila][columna + i] = palabra.charAt(i);
-                    } else { 
+                    }
+                } else {
+                    for (int i = 0; i < palabra.length(); i++) {
                         tablero[fila + i][columna] = palabra.charAt(i);
                     }
                 }
-                colocada = true; // Marcar como colocada
+                colocada = true;
             }
         }
     }
 
-    // Letras aleatorias en espacios vacios
+    // Rellenar espacios vacíos con letras aleatorias
     for (int f = 0; f < 14; f++) {
         for (int c = 0; c < 14; c++) {
-            if (tablero[f][c] == ' ') { 
+            if (tablero[f][c] == ' ') {
                 tablero[f][c] = (char) (Math.random() * 26 + 65);
             }
         }
     }
-
-    // Imprimir el tablero
-    for (int f = 0; f < 14; f++) {
-        for (int c = 0; c < 14; c++) {
-            System.out.print(" | " + tablero[f][c]);
+    
+    while (intentosFallidos < 4 && palabrasRestantes > 0) {
+        // Mostrar el tablero
+        System.out.println("  ____________________________");
+        System.out.println(" /     Tablero de Juego      /");
+        System.out.println("/____________________________/");
+        for (int f = 0; f < 14; f++) {
+            for (int c = 0; c < 14; c++) {
+                if (palabrasEncontradas[f][c]) {
+                    System.out.print(" | #");
+                } else {
+                    System.out.print(" | " + tablero[f][c]);
+                }
+            }
+            System.out.println(" |");
         }
-        System.out.println(" |");
+        System.out.println("\nTe faltan " + palabrasRestantes + " palabras de " + Palabras.length);
+        System.out.println("Puntos actuales: " + puntos);
+        
+        
+        System.out.print("\nIngrese una palabra: ");
+        String palabraUsuario = leer.next().toUpperCase();
+
+        boolean palabraEncontrada = false;
+        
+        // Buscar la palabra horizontalmente
+        for (int f = 0; f < 14; f++) {
+            for (int c = 0; c <= 14 - palabraUsuario.length(); c++) {
+                StringBuilder palabraTablero = new StringBuilder();
+                for (int i = 0; i < palabraUsuario.length(); i++) {
+                    palabraTablero.append(tablero[f][c + i]);
+                }
+                if (palabraTablero.toString().equals(palabraUsuario)) {
+                    palabraEncontrada = true;
+                    
+                    puntos += palabraUsuario.length();
+                    
+                    for (int i = 0; i < palabraUsuario.length(); i++) {
+                        palabrasEncontradas[f][c + i] = true;
+                        tablero[f][c + i] = '#';
+                    }
+                    palabrasRestantes--;
+                    Aciertos++;
+                }
+            }
+        }
+        
+        // Buscar la palabra verticalmente
+        for (int f = 0; f <= 14 - palabraUsuario.length(); f++) {
+            for (int c = 0; c < 14; c++) {
+                StringBuilder palabraTablero = new StringBuilder();
+                for (int i = 0; i < palabraUsuario.length(); i++) {
+                    palabraTablero.append(tablero[f + i][c]);
+                }
+                if (palabraTablero.toString().equals(palabraUsuario)) {
+                    palabraEncontrada = true;
+                    
+                    puntos += palabraUsuario.length();
+                    
+                    for (int i = 0; i < palabraUsuario.length(); i++) {
+                        palabrasEncontradas[f + i][c] = true;
+                        tablero[f + i][c] = '#';
+                    }
+                    palabrasRestantes--;
+                    Aciertos++;
+                }
+            }
+        }
+
+        if (palabraEncontrada) {
+            System.out.println("Muy bien, Has encontrado la palabra: " + palabraUsuario);
+        } else {
+            intentosFallidos++;
+            puntos -=5;
+            System.out.println("Incorrecto. Te quedan " + (4 - intentosFallidos) + " intentos.");
+        }
     }
+
+    if (palabrasRestantes == 0) {
+        System.out.println("--ENCONTRASTE TODAS LAS PALABRAS--");
+    } else {
+        System.out.println("--GAME OVER-- Inténtalo de nuevo");
+    }
+    Usuario[ContadorDeJugadores] = NombreUsuario;
+    Puntuaciones[ContadorDeJugadores] = puntos;
+    PalabrasEncontradas[ContadorDeJugadores] = Aciertos;
+    Fallos[ContadorDeJugadores] = intentosFallidos;
+    ContadorDeJugadores++;
     
+    MenuNuevaPartida();
     
-    
-}
-
-
-
-
-
-    
+    }  
 }
